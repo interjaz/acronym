@@ -253,3 +253,7 @@ paket-files/
 
 # Do not include binary files
 /Server/pkg/*
+!Server/pkg/.gitkeep
+
+/Server/bin/*
+!Server/bin/.gitkeep
