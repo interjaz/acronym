@@ -1,18 +1,21 @@
-package AcronymServerFetcher
+package main
 
 import "fmt"
 
+// Fetcher is an interface for abstracting different type of Wikipedia fetchers
 type Fetcher interface {
 	Language() string
 	UpdateAll() error
 }
 
+// EnglishFetcher is Fetcher suitable for English wikipedia
 type EnglishFetcher struct {
 	reader     HttpGetReader
 	parser     WikiParser
 	repository AcronymRepository
 }
 
+// NewEnglishFetcher returns new EnglishFetcher
 func NewEnglishFetcher(
 	reader HttpGetReader,
 	parser WikiParser,
@@ -26,10 +29,12 @@ func NewEnglishFetcher(
 	return fetcher
 }
 
+// Language is a getter which describes which language particular fetcher operates on
 func (fetcher *EnglishFetcher) Language() string {
 	return "EN"
 }
 
+// UpdateAll pefroms fetch operation and updates local store
 func (fetcher *EnglishFetcher) UpdateAll() error {
 
 	baseUrl := "https://en.wikipedia.org/wiki/List_of_acronyms"

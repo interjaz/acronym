@@ -1,4 +1,4 @@
-package AcronymServerFetcher
+package main
 
 import (
 	"database/sql"
@@ -7,6 +7,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+// Acronym is struct which represents  structure of Acronym table
 type Acronym struct {
 	AcronymId  int
 	Acronym    string
@@ -17,6 +18,7 @@ type Acronym struct {
 	ModifiedAt int64
 }
 
+// NewAcronym returns new Acronym
 func NewAcronym() *Acronym {
 	acronym := new(Acronym)
 	return acronym
@@ -24,6 +26,7 @@ func NewAcronym() *Acronym {
 
 var acronymCreatedAtIndex = 6
 
+// AcronymRepository is an interface for accessing Acronym table
 type AcronymRepository interface {
 	Open() error
 	Insert(acronym *Acronym) error
@@ -31,6 +34,7 @@ type AcronymRepository interface {
 	Close() error
 }
 
+// SqliteAcronymRepository is a concreate implementation of AcronymRepository using SQLite as store
 type SqliteAcronymRepository struct {
 	Driver   string
 	Database string
@@ -38,6 +42,7 @@ type SqliteAcronymRepository struct {
 	db *sql.DB
 }
 
+// NewSqliteAcronymRepository returns new SqliteAcronymRepository
 func NewSqliteAcronymRepository(databasePath string) *SqliteAcronymRepository {
 	repository := new(SqliteAcronymRepository)
 	repository.Database = databasePath
@@ -46,6 +51,7 @@ func NewSqliteAcronymRepository(databasePath string) *SqliteAcronymRepository {
 	return repository
 }
 
+// Open opens database for transactions
 func (repository *SqliteAcronymRepository) Open() error {
 	db, err := sql.Open(repository.Driver, repository.Database)
 	if err != nil {
@@ -61,6 +67,7 @@ func (repository *SqliteAcronymRepository) Open() error {
 	return nil
 }
 
+// Close closes database
 func (repository *SqliteAcronymRepository) Close() error {
 	if repository.db != nil {
 		repository.db.Close()
@@ -70,6 +77,7 @@ func (repository *SqliteAcronymRepository) Close() error {
 	return nil
 }
 
+// DeleteAll deletes all entries in database
 func (repository *SqliteAcronymRepository) DeleteAll() error {
 	db := repository.db
 
@@ -79,6 +87,7 @@ func (repository *SqliteAcronymRepository) DeleteAll() error {
 	return err
 }
 
+// Insert inserts and acronym to the store
 func (repository *SqliteAcronymRepository) Insert(acronym *Acronym) error {
 	db := repository.db
 

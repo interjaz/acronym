@@ -257,3 +257,6 @@ paket-files/
 
 /Server/bin/*
 !Server/bin/.gitkeep
+/Server/src/AcronymServerFetcher/AcronymServerFetcher
+/Server/src/AcronymServerFetcher/db/*
+/Server/src/AcronymServerFetcher/logs/*

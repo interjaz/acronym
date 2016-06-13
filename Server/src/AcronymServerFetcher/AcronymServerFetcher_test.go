@@ -1,4 +1,4 @@
-package AcronymServerFetcher
+package main
 
 import "testing"
 

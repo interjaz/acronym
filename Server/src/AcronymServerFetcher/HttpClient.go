@@ -1,27 +1,39 @@
-package AcronymServerFetcher
+package main
 
 import (
 	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"time"
 )
 
+// HttpGetReader interface allows for greater abstraction
 type HttpGetReader interface {
 	Read(url string) (page string, err error)
 }
 
 var emptyString = ""
 
-type HttpClient struct{}
+// HttpClient is an implementation of HttpGetReader using httpClient package
+type HttpClient struct {
+	client *http.Client
+}
 
-func NewHttpClient() *HttpClient {
-	newHttpClient := new(HttpClient)
-	return newHttpClient
+// HttpClient return new HttpClient
+func NewHttpClient(timeout time.Duration) *HttpClient {
+	client := new(HttpClient)
+
+	client.client = &http.Client{
+		Timeout: timeout,
+	}
+
+	return client
 }
 
 func (reader *HttpClient) Read(url string) (page string, err error) {
-	response, err := http.Get(url)
+
+	response, err := reader.client.Get(url)
 	if err != nil {
 		return emptyString, err
 	}

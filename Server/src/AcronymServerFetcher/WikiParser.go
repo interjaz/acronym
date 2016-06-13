@@ -1,4 +1,4 @@
-package AcronymServerFetcher
+package main
 
 import (
 	"regexp"
@@ -7,29 +7,35 @@ import (
 	"golang.org/x/net/html"
 )
 
+// WikiParser is an interface used by WikiParsers
 type WikiParser interface {
 	Parse(content string) (acronyms []AcronymWikiResult, err error)
 }
 
+// AcronymWikiResult structure for represending data returned by the WikiParser
 type AcronymWikiResult struct {
 	Acronym     string
 	Description string
 	Url         string
 }
 
+// NewAcronymWikiResult return new AcronymWikiResult
 func NewAcronymWikiResult() *AcronymWikiResult {
 	acronym := new(AcronymWikiResult)
 	return acronym
 }
 
+// EnglishWikiParser is WikiParser suitable for parsing english wikipedia entries
 type EnglishWikiParser struct {
 }
 
+// NewEnglishWikiParser returns new EnglishWikiParser
 func NewEnglishWikiParser() *EnglishWikiParser {
 	parser := new(EnglishWikiParser)
 	return parser
 }
 
+// Parse func parses the english wikipedia's html body
 func (proc *EnglishWikiParser) Parse(content string) (acronyms []AcronymWikiResult, err error) {
 
 	contentReader := strings.NewReader(content)
