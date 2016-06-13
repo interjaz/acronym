@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 
@@ -41,12 +42,20 @@ func (proc *EnglishWikiParser) Parse(content string) (acronyms []AcronymWikiResu
 	contentReader := strings.NewReader(content)
 	tokenizer := html.NewTokenizer(contentReader)
 
-	aExpr := "<a[a-zA-Z0-9 =\"\\-]*href=\"([a-zA-Z0-9\\/_()+&%?=.;]*)\"[a-zA-Z0-9 =z\\-\" ;?=.]*title=\"([a-zA-Z0-9 ()+-\\/]*)\"[a-zA-Z0-9 =\"\\-]*>(.+)<\\/a>(.+)"
+	aSimpleExpr := `<li>[^<]*<a href="([^"]+)"[^>]*>([^<]+)<\/a>(.+)<\/li>`
+	aComplexExpr := `<li>[^<]*<a href="([^"]+)"[^>]*>([\S ]+)<\/a>([\s\S]+)<\/ul>`
 
-	aRegex, _ := regexp.Compile(aExpr)
+	aSimpleRegex, err := regexp.Compile(aSimpleExpr)
+	if err != nil {
+		panic(err)
+	}
+
+	aComplexRegex, err := regexp.Compile(aComplexExpr)
+	if err != nil {
+		panic(err)
+	}
 
 	acronyms = make([]AcronymWikiResult, 0)
-
 	for {
 		data, isDone := readTag(tokenizer, "li")
 
@@ -54,18 +63,27 @@ func (proc *EnglishWikiParser) Parse(content string) (acronyms []AcronymWikiResu
 			return acronyms, nil
 		}
 
-		found := aRegex.FindStringSubmatch(data)
-
+		found := aComplexRegex.FindStringSubmatch(data)
 		if found != nil {
-
 			acronym := NewAcronymWikiResult()
 			acronym.Url = englishWikiUrl + toHumanText(found[1])
 			acronym.Acronym = toHumanText(found[2])
-			description := found[3] + " " + found[4]
-			acronym.Description = toHumanText(description)
+			acronym.Description = toHumanText(found[3])
+
+			acronyms = append(acronyms, *acronym)
+			continue
+		}
+
+		found = aSimpleRegex.FindStringSubmatch(data)
+		if found != nil {
+			acronym := NewAcronymWikiResult()
+			acronym.Url = englishWikiUrl + toHumanText(found[1])
+			acronym.Acronym = toHumanText(found[2])
+			acronym.Description = toHumanText(found[3])
 
 			acronyms = append(acronyms, *acronym)
 		}
+
 	}
 }
 
@@ -94,6 +112,7 @@ func readTag(tokenizer *html.Tokenizer, tagName string) (data string, isFinished
 			}
 		case html.EndTagToken:
 			if depth == 0 {
+				raw = fmt.Sprintf("<%s>%s</%s>", tagName, raw, tagName)
 				return raw, false
 			}
 
@@ -110,18 +129,19 @@ func readTag(tokenizer *html.Tokenizer, tagName string) (data string, isFinished
 
 }
 
+var commonStripTagsEnumeration = []*regexp.Regexp{
+	commonTagBegin("li"),
+}
 var commonStripTags = []*regexp.Regexp{
-	commonTagBegin("a"), commonTagEnd("a"),
-	// It is possible to have multiple nesting of <a> tags...
+	commonTagEnd("li"),
 	commonTagBegin("a"), commonTagEnd("a"),
 	commonTagBegin("b"), commonTagEnd("b"),
 	commonTagBegin("i"), commonTagEnd("i"),
 	commonTagBegin("u"), commonTagEnd("u"),
 	commonTagBegin("strong"), commonTagEnd("strong"),
-	commonTagBegin("li"), commonTagEnd("li"),
-	commonTagBegin("ul"), commonTagEnd("ul"),
 	commonTagBegin("sup"), commonTagEnd("sup"),
-	toRegexp("\\r"), toRegexp("\\n"), toRegexp("\t"),
+	commonTagBegin("ul"), commonTagEnd("ul"),
+	toRegexp("\\r"), toRegexp("\\t"),
 }
 
 var englishWikiUrl = "https://en.wikipedia.org"
@@ -137,21 +157,33 @@ func commonTagBegin(tag string) *regexp.Regexp {
 }
 
 func commonTagEnd(tag string) *regexp.Regexp {
-	r, _ := regexp.Compile("<\\/" + tag + ">")
+	r, _ := regexp.Compile("</" + tag + ">")
 	return r
 }
 
 func toHumanText(content string) string {
 
-	for i := 1; i < len(commonStripTags); i++ {
+	// Wikipedia has quite inconsistent formatting
+	// lets try make best out of it
+
+	for i := 0; i < len(commonStripTagsEnumeration); i++ {
+		content = commonStripTagsEnumeration[i].ReplaceAllString(content, "\n– ")
+	}
+
+	for i := 0; i < len(commonStripTags); i++ {
 		content = commonStripTags[i].ReplaceAllString(content, emptyString)
 	}
 
 	content = strings.TrimSpace(content)
+	content = strings.Replace(content, "\n\n", "\n", -1)
 	content = strings.Replace(content, "( ", "(", -1)
 	content = strings.Replace(content, " )", ")", -1)
+	content = strings.Replace(content, " – ", "\n– ", -1)
 	content = strings.Replace(content, "  ", " ", -1)
 	content = html.UnescapeString(content)
+
+	content = strings.Replace(content, "  ", " ", -1)
+	content = strings.Replace(content, "  ", " ", -1)
 
 	return content
 }
