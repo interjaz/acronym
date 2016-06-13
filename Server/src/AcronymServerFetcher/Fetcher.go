@@ -68,6 +68,10 @@ func (fetcher *EnglishFetcher) UpdateAll() error {
 
 		for _, acronym := range acronyms {
 
+			if len(acronym.Acronym) == 0 {
+				continue
+			}
+
 			dbAcronym := NewAcronym()
 			dbAcronym.Acronym = acronym.Acronym
 			dbAcronym.Definition = acronym.Description

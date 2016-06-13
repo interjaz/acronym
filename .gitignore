@@ -260,3 +260,5 @@ paket-files/
 /Server/src/AcronymServerFetcher/AcronymServerFetcher
 /Server/src/AcronymServerFetcher/db/*
 /Server/src/AcronymServerFetcher/logs/*
+/Server/src/AcronymServerWebsite/logs/*
+/Server/src/AcronymServerWebsite/AcronymServerWebsite
