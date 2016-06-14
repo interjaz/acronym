@@ -27,7 +27,8 @@ namespace AcronymClient.Core
 			lstAcronyms.ItemTapped += OnItemTapped;
 
 			LstAcronyms = new ObservableCollection<AcronymModel>();
-			SearchAsync("aaa").ConfigureAwait(false);
+			TxtToFind = "aa";
+			SearchAsync(TxtToFind).ConfigureAwait(false);
 		}
 
 		private ObservableCollection<AcronymModel> _lstAcronyms;
@@ -99,31 +100,37 @@ namespace AcronymClient.Core
 		{
 			try
 			{
-				UpdateStatus("Retriving ...");
+				UpdateStatus("Retriving ...", true);
 				var foundAcronyms = await _acronymProvider.FindAsync(toFind);
 				if (foundAcronyms.Error != null)
 				{
-					UpdateStatus("Failed: " + foundAcronyms.Error.ErrorCode + " " +foundAcronyms.Error.Tag);
+					UpdateStatus("Failed", false);
+
+					System.Diagnostics.Debug.WriteLine(foundAcronyms.Error.ErrorCode);
+					System.Diagnostics.Debug.WriteLine(foundAcronyms.Error.Tag);
 					return;
 				}
 
 				Device.BeginInvokeOnMainThread(() =>
 				{
 					LstAcronyms = new ObservableCollection<AcronymModel>(foundAcronyms.Some);
+					TxtStatus = "Found: " + LstAcronyms.Count;
+					lstAcronyms.IsRefreshing = false;
 				});
-				UpdateStatus("Done");
 			}
 			catch (Exception ex)
 			{
-				UpdateStatus("Failed: " + ex);
+				UpdateStatus("Failed", false);
+				System.Diagnostics.Debug.WriteLine(ex);
 			}
 		}
 
-		private void UpdateStatus(string status)
+		private void UpdateStatus(string status, bool isRefreshing)
 		{
 			Device.BeginInvokeOnMainThread(() =>
 			{
 				TxtStatus = status;
+				lstAcronyms.IsRefreshing = isRefreshing;
 			});
 		}
 

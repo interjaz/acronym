@@ -9,6 +9,7 @@ using Android.Widget;
 using Android.OS;
 using AcronymClient.Core;
 using Xamarin.Forms.Platform.Android;
+using System.IO;
 
 namespace AcronymClient.Droid
 {
@@ -25,7 +26,8 @@ namespace AcronymClient.Droid
 
 			global::Xamarin.Forms.Forms.Init(this, bundle);
 
-			LoadApplication(new App());
+			var dbPath = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments), "Acronyms.db");
+			LoadApplication(new App(dbPath));
 		}
 	}
 }

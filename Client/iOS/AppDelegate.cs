@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using AcronymClient.Core;
 using Foundation;
@@ -14,7 +15,8 @@ namespace AcronymClient.iOS
 		{
 			global::Xamarin.Forms.Forms.Init();
 
-			LoadApplication(new App());
+			var dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Acronyms.db");
+			LoadApplication(new App(dbPath));
 
 			return base.FinishedLaunching(app, options);
 		}

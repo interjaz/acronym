@@ -4,7 +4,9 @@ namespace AcronymClient.Core.Utils
 	public enum ErrorCode
 	{
 		RestfulWrongStatusCode,
-		RestfulDeserializeError
+		RestfulDeserializeError,
+		DatabaseReadError,
+		RestfulNetworkFailure
 	}
 }
 

@@ -18,7 +18,7 @@ namespace AcronymClient.Core.Providers
 
 		readonly string _restfulAcronymEndpoint;
 
-		static RestfulAcronymProvider() 
+		static RestfulAcronymProvider()
 		{
 			_httpClient = new HttpClient(new NativeMessageHandler());
 			_jsonConverter = new UnixDateTimeConverter();
@@ -30,10 +30,10 @@ namespace AcronymClient.Core.Providers
 		{
 			Check.NotNull(restfulAcronymEndpoint, nameof(restfulAcronymEndpoint));
 
-			restfulAcronymEndpoint = restfulAcronymEndpoint.EndsWith("/", StringComparison.OrdinalIgnoreCase) 
-                                       ? restfulAcronymEndpoint.Substring(0, restfulAcronymEndpoint.Length - 1)
-                                       : restfulAcronymEndpoint;
-			
+			restfulAcronymEndpoint = restfulAcronymEndpoint.EndsWith("/", StringComparison.OrdinalIgnoreCase)
+									   ? restfulAcronymEndpoint.Substring(0, restfulAcronymEndpoint.Length - 1)
+									   : restfulAcronymEndpoint;
+
 			_restfulAcronymEndpoint = restfulAcronymEndpoint;
 		}
 
@@ -42,8 +42,25 @@ namespace AcronymClient.Core.Providers
 			Check.NotNull(acronym, nameof(acronym));
 
 			var requestUri = string.Format("{0}/{1}", _restfulAcronymEndpoint, acronym);
-			var response = await _httpClient.GetAsync(requestUri);
 
+			// Get response
+			HttpResponseMessage response;
+			try
+			{
+				response = await _httpClient.GetAsync(requestUri);
+			}
+			catch (Exception ex)
+			{
+				var errorMessage = new ErrorMessage()
+				{
+					ErrorCode = ErrorCode.RestfulNetworkFailure,
+					Tag = ex
+				};
+				var error = new EitherAcronyms(errorMessage);
+				return error;
+			}
+
+			// Check status code
 			if (!response.IsSuccessStatusCode)
 			{
 				var errorMessage = new ErrorMessage()
@@ -55,11 +72,27 @@ namespace AcronymClient.Core.Providers
 				return error;
 			}
 
-			var responesBody = await response.Content.ReadAsStringAsync();
+			// Read response
+			string responseBody;
 			try
 			{
-				var acronyms = JsonConvert.DeserializeObject<List<AcronymModel>>(responesBody, _jsonConverter);
+				responseBody = await response.Content.ReadAsStringAsync();
+			}
+			catch (Exception ex)
+			{
+				var errorMessage = new ErrorMessage()
+				{
+					ErrorCode = ErrorCode.RestfulNetworkFailure,
+					Tag = ex
+				};
+				var error = new EitherAcronyms(errorMessage);
+				return error;
+			}
 
+			// Deserialize
+			try
+			{
+				var acronyms = JsonConvert.DeserializeObject<List<AcronymModel>>(responseBody, _jsonConverter);
 				var success = new EitherAcronyms(acronyms);
 				return success;
 			}
@@ -75,6 +108,7 @@ namespace AcronymClient.Core.Providers
 				return error;
 			}
 		}
+
 
 		private class UnixDateTimeConverter : JsonConverter
 		{
