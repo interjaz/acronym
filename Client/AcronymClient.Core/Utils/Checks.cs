@@ -1,5 +1,5 @@
 ﻿using System;
-namespace AcronymClient.Core
+namespace AcronymClient.Core.Utils
 {
 	public static class Check
 	{

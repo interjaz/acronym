@@ -1,4 +1,5 @@
 ﻿using System;
+using AcronymClient.Core.Providers;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 

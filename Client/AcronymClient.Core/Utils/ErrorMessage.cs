@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace AcronymClient.Core
+namespace AcronymClient.Core.Utils
 {
 	public class ErrorMessage
 	{

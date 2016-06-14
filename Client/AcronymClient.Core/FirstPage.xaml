@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="AcronymClient.Core.FirstPage" Title="Acronyms">
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
+		xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+		x:Class="AcronymClient.Core.FirstPage" 
+		xmlns:local="clr-namespace:AcronymClient.Core.Controls;assembly=AcronymClient.Core"
+		Title="Acronyms">
 	<ContentPage.Content>
 
 	
@@ -18,7 +22,7 @@
 										Constant=-90}"
 				/>
 
-			<Entry Placeholder="Acronym"
+			<local:NoHelpEntry Placeholder="Acronym"
 				Margin="10,10,10,0"
 				Text="{Binding TxtToFind}"
 				RelativeLayout.WidthConstraint=
@@ -36,9 +40,11 @@
 		</StackLayout>
 
 		<ListView x:Name="lstAcronyms"
-			 CachingStrategy="RecycleElement"
-			 ItemsSource="{Binding LstAcronyms}"
-			HasUnevenRows="true">
+			 	CachingStrategy="RecycleElement"
+				ItemsSource="{Binding LstAcronyms}"
+				IsPullToRefreshEnabled="true"
+				RefreshCommand="{Binding SearchCommand}"
+				HasUnevenRows="true">
 				
 				<ListView.ItemTemplate>
 						<DataTemplate>
@@ -59,25 +65,19 @@
 										<Label
 											Text="{Binding Definition}" 
 											FontSize="16"/>
-										<Label 
-											FontSize="14"
-											HeightRequest="20"
-											HorizontalOptions="Start"
-											Text="See on Wikipedia">
-											<Label.TextColor>
-												<OnPlatform x:TypeArguments="Color"
-													iOS="#007AFF"
-													Android="#007AFF"
-													WinPhone="#007AFF"/>
-											</Label.TextColor>
-										</Label>
 									</StackLayout>
 							
 								</ViewCell>
 						</DataTemplate>
 				</ListView.ItemTemplate>
 		</ListView>
-		
+
+		<Label
+			Text="All acronyms come from Wikipedia"
+			Margin="10,0,0,0"
+			FontSize="12"
+			HorizontalOptions="Center"/>
+			
 	</StackLayout>
 
 	</ContentPage.Content>

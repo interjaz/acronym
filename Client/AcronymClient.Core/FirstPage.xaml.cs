@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using AcronymClient.Core.DataAccess.Entities;
+using AcronymClient.Core.Providers;
+using AcronymClient.Core.Utils;
 using Xamarin.Forms;
 
 namespace AcronymClient.Core
@@ -21,6 +24,7 @@ namespace AcronymClient.Core
 			this.BindingContext = this;
 
 			_acronymProvider = acronymProvider;
+			lstAcronyms.ItemTapped += OnItemTapped;
 
 			LstAcronyms = new ObservableCollection<AcronymModel>();
 			SearchAsync("aaa").ConfigureAwait(false);
@@ -89,7 +93,7 @@ namespace AcronymClient.Core
 				_searchCommand = _searchCommand ?? new Command(() => SearchAsync(TxtToFind).ConfigureAwait(false));
 				return _searchCommand;
 			}
-		}	
+		}
 
 		private async Task SearchAsync(string toFind)
 		{
@@ -121,6 +125,18 @@ namespace AcronymClient.Core
 			{
 				TxtStatus = status;
 			});
+		}
+
+		private void OnItemTapped(object sender, ItemTappedEventArgs e)
+		{
+			var acronym = e.Item as AcronymModel;
+			if (acronym == null)
+			{
+				return;
+			}
+
+			var uri = new Uri(acronym.Url);
+			Device.OpenUri(uri);
 		}
 
 	}

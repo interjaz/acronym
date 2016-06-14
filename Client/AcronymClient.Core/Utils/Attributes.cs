@@ -1,5 +1,5 @@
 ﻿using System;
-namespace AcronymClient.Core
+namespace AcronymClient.Core.Utils
 {
 	[AttributeUsage(AttributeTargets.Parameter | AttributeTargets.ReturnValue | AttributeTargets.Field | AttributeTargets.Method)]
 	public class NotNullAttribute : Attribute { }

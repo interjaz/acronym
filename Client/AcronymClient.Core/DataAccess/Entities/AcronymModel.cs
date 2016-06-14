@@ -1,7 +1,7 @@
 ﻿using System;
 using SQLite;
 
-namespace AcronymClient.Core
+namespace AcronymClient.Core.DataAccess.Entities
 {
 	[Table("Acronyms")]
 	public class AcronymModel

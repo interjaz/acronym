@@ -1,11 +1,13 @@
 using System;
-using System.Threading.Tasks;
 using System.Collections.Generic;
-using ModernHttpClient;
 using System.Net.Http;
+using System.Threading.Tasks;
+using AcronymClient.Core.DataAccess.Entities;
+using AcronymClient.Core.Utils;
+using ModernHttpClient;
 using Newtonsoft.Json;
 
-namespace AcronymClient.Core
+namespace AcronymClient.Core.Providers
 {
 	using EitherAcronyms = Either<IEnumerable<AcronymModel>>;
 
