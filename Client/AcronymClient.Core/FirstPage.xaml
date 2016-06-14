@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="AcronymClient.Core.FirstPage" Title="Acronyms">
+	<ContentPage.Content>
+
+	
+	<StackLayout
+		HorizontalOptions="FillAndExpand"
+		VerticalOptions="FillAndExpand">
+		
+		<RelativeLayout>
+			<Button Text="Search"
+				Margin="0,2"
+				HorizontalOptions="Center"
+				Command="{Binding SearchCommand}" 
+				RelativeLayout.XConstraint=
+				"{ConstraintExpression Type=RelativeToParent,
+										Property=Width,
+										Constant=-90}"
+				/>
+
+			<Entry Placeholder="Acronym"
+				Margin="10,10,10,0"
+				Text="{Binding TxtToFind}"
+				RelativeLayout.WidthConstraint=
+                 "{ConstraintExpression Type=RelativeToParent, 
+                                        Property=Width,
+                                        Factor=1,
+										Constant=-90}" />
+			
+
+		</RelativeLayout>
+
+		<StackLayout Orientation="Horizontal" HorizontalOptions="Start" Margin="10,0,0,0" >
+			<Label Text="Status:" FontSize="12" />
+			<Label Text="{Binding TxtStatus}" FontSize="12"/>
+		</StackLayout>
+
+		<ListView x:Name="lstAcronyms"
+			 CachingStrategy="RecycleElement"
+			 ItemsSource="{Binding LstAcronyms}"
+			HasUnevenRows="true">
+				
+				<ListView.ItemTemplate>
+						<DataTemplate>
+								<ViewCell>
+									<StackLayout Padding="10,0">
+										<StackLayout Orientation="Horizontal">
+											<Label
+												Text="{Binding Acronym}"
+												FontSize="27"
+												HorizontalOptions="StartAndExpand" />
+											<Label
+												Text="{Binding Language}"
+												FontAttributes="Italic"
+												FontSize="14"
+												WidthRequest="30"
+												HorizontalOptions="End" />
+										</StackLayout>
+										<Label
+											Text="{Binding Definition}" 
+											FontSize="16"/>
+										<Label 
+											FontSize="14"
+											HeightRequest="20"
+											HorizontalOptions="Start"
+											Text="See on Wikipedia">
+											<Label.TextColor>
+												<OnPlatform x:TypeArguments="Color"
+													iOS="#007AFF"
+													Android="#007AFF"
+													WinPhone="#007AFF"/>
+											</Label.TextColor>
+										</Label>
+									</StackLayout>
+							
+								</ViewCell>
+						</DataTemplate>
+				</ListView.ItemTemplate>
+		</ListView>
+		
+	</StackLayout>
+
+	</ContentPage.Content>
+</ContentPage>
