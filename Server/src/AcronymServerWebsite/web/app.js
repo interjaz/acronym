@@ -22,9 +22,13 @@ function Update(acronyms) {
             }
 
             var acronym = acronyms[index]
+
+            var definition = acronym.Definition
+            definition = definition.replace(/\n/g, "<br/>")
+
             child += "<h4>" + acronym.Acronym + "</h4>" +
                         "<h6>Language: " + acronym.Language + "</h6>" +
-                        "<p>" + acronym.Definition + "</p>" +
+                        "<p>" + definition + "</p>" +
                         '<a href="'+ acronym.Url +'"> Link </a>';
 
         }
