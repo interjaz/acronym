@@ -13,7 +13,7 @@ func main() {
 	// Assure directories exists
 	os.Mkdir("log", 0777)
 
-	logFileName := fmt.Sprintf("./log/log-%d.txt", time.Now().Unix())
+	logFileName := fmt.Sprintf("./log/log-website-%d.txt", time.Now().Unix())
 	logFile, err := os.OpenFile(logFileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
 	if err != nil {
 		panic(err)
@@ -23,7 +23,7 @@ func main() {
 	logger.Print("[.main] Starting application")
 	defer logger.Print("[.main] Closing application")
 
-	dbPath := "../AcronymServerFetcher/db/AcronymDb.sqlite"
+	dbPath := "./db/AcronymDb.sqlite"
 	repository := NewSqliteAcronymRepository(dbPath)
 
 	fileHandler := http.FileServer(http.Dir("./web"))

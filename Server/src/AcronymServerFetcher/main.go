@@ -16,7 +16,7 @@ func main() {
 	os.Mkdir("logs", 0777)
 	os.Mkdir("db", 0777)
 
-	logFileName := fmt.Sprintf("./logs/log-%d.txt", time.Now().Unix())
+	logFileName := fmt.Sprintf("./logs/log-fetcher-%d.txt", time.Now().Unix())
 	logFile, err := os.OpenFile(logFileName, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0600)
 	if err != nil {
 		panic(err)
