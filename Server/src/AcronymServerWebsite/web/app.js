@@ -45,6 +45,15 @@ function Update(acronyms) {
 function Init() {
 
     $.ajax({
+        url: "buildVersion",
+        context: document.body
+    }).success(function(data) {
+        
+        $('#lblBuildVersion').html(data)
+    
+    });
+
+    $.ajax({
         url: "api/v1/Random/6",
         context: document.body
     }).success(function(data) {
