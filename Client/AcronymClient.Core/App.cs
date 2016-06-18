@@ -15,7 +15,7 @@ namespace AcronymClient.Core
 			var sqliteConnection = new SQLite.SQLiteAsyncConnection(databasePath);
 			var acronymRepository = new AcronymRepository(sqliteConnection);
 
-			var restfulProvider = new RestfulAcronymProvider("http://192.168.0.10:8080/api/v1/Acronym");
+			var restfulProvider = new RestfulAcronymProvider("http://146.185.158.204:8080/api/v1/Acronym");
 			var databaseProvider = new DatabaseAcronymProvider(acronymRepository);
 			var cachedProvider = new CachedProvider(restfulProvider, databaseProvider, acronymRepository);
 
