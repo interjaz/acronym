@@ -8,3 +8,5 @@ via RESTful API which is consumed by the mobile application.
 Mobile aplication is written C# and uses Xamarin (with Xamarin.Forms)
 
 Server end is implemented in Go.
+
+See: https://medium.com/@interjaz2/project-go-xamarin-b33234c6e9c7 to learn more about the project.
